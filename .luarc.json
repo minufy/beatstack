@@ -1,0 +1,16 @@
+{
+    "$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json",
+    "workspace.library": [
+        "C:/lua-addons/love2d/library"
+    ],
+    "runtime.version": "LuaJIT",
+    "runtime.special": {
+        "love.filesystem.load": "loadfile"
+    },
+    "workspace.checkThirdParty": false,
+    "completion.autoRequire": false,
+    "workspace.ignoreSubmodules": false,
+    "diagnostics.disable": [
+        "duplicate-set-field"
+    ]
+}
