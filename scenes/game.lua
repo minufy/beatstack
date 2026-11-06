@@ -58,7 +58,7 @@ function Game:update(dt)
     if self.direction ~= 0 then
         self.das_timer = self.das_timer+dt
         if self.das_timer >= SETTINGS.das then
-            self:update_arr(dt)
+            self:update_arr(dt, Input.soft_drop.down)
         end
     end
 end
@@ -97,11 +97,13 @@ function Game:set_direction(dx)
     self.arr_time = 0
 end
 
-function Game:update_arr(dt)
+function Game:update_arr(dt, soft_drop)
     if SETTINGS.arr == 0 then
         for _ = 1, BOARD_W do
             self:move(self.direction, 0)
-            self:update_sdarr(0)
+            if soft_drop then
+                self:update_sdarr(0)
+            end
         end
     else
         self.arr_timer = self.arr_timer+dt

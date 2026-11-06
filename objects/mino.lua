@@ -13,6 +13,9 @@ function Mino.new(x, y, type)
 end
 
 function Mino:draw()
+    if self.remove then
+        return
+    end
     for _, pos in ipairs(MINO.shapes[self.type][self.rotation]) do
         local x, y = pos[1], pos[2]
         love.graphics.setColor(MINO.colors[self.type])

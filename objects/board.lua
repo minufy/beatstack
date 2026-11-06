@@ -49,10 +49,34 @@ function Board:update(dt)
 
 end
 
+function Board:clear_lines()
+    local cleared = 0
+    for y = BOARD_H, 1, -1 do
+        local row = self.grid[y]
+        local full = true
+        for x = 1, BOARD_W do
+            if row[x] == nil then
+                full = false
+                break
+            end
+        end
+        if full then
+            cleared = cleared+1
+        elseif cleared > 0 then
+            self.grid[y+cleared] = row
+        end
+    end
+    for y = 1, cleared do
+        self.grid[y] = {}
+    end
+    return cleared
+end
+
 function Board:place(type, x, y, rotation)
     for _, pos in ipairs(MINO.shapes[type][rotation]) do
         self.grid[y+pos[2]+1][x+pos[1]+1] = type
     end
+    self:clear_lines()
 end
 
 function Board:check_collision(type, x, y, rotation)
