@@ -9,6 +9,7 @@ local spawn_y
 
 function Game:init()
     Level:init()
+
     spawn_x = 3
     spawn_y = BOARD_H/2-2
 
@@ -48,6 +49,9 @@ function Game:update(dt)
     end
     if Input.soft_drop.down then
         self:update_sdarr(dt)
+    end
+    if Input.hold.pressed then
+        self:hold()
     end
     if Input.restart.pressed then
         SM:set_fade(function ()
@@ -131,6 +135,9 @@ end
 function Game:spawn_mino()
     local mino_type = self.randomizer:next()
     self.mino = self:add(Mino.new(spawn_x, spawn_y, mino_type, self.board))
+    self.holded = false
+    self.next_panel:update_contents(self.randomizer:peek(5))
+    self.hold_panel:set_shadow(false)
 end
 
 function Game:move(dx, dy)
@@ -141,10 +148,28 @@ function Game:rotate(dr)
     self.mino:rotate(dr)
 end
 
-function Game:hard_drop(dr)
+function Game:hard_drop()
     self.mino:hard_drop()
     self:spawn_mino()
     self:reset_timers()
+end
+
+function Game:hold()
+    if self.holded then
+    	return
+    end
+    local current_type = self.mino.type
+    self.holded = true
+    if self.hold_type == nil then
+        self.mino:die()
+        self:spawn_mino()
+    else
+        self.mino:die()
+        self.mino = self:add(Mino.new(spawn_x, spawn_y, self.hold_type, self.board))
+    end
+    self.hold_type = current_type
+    self.hold_panel:update_contents({self.hold_type})
+    self.hold_panel:set_shadow(true)
 end
 
 function Game:reset_timers()
@@ -159,7 +184,11 @@ function Game:reset()
     self:reset_timers()
     self.objects = {}
     self.randomizer = Randomizer.new()
+    self.next_panel = self:add(Panel.new((BOARD_W+1)*CELL_SIZE, spawn_y*CELL_SIZE))
+    self.hold_panel = self:add(Panel.new(-CELL_SIZE*5, spawn_y*CELL_SIZE))
     self.board = self:add(Board.new())
+    self.hold_type = nil
+    self.holded = false
     self:spawn_mino()
 end
 

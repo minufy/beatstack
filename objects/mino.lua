@@ -61,7 +61,7 @@ function Mino:rotate(dr)
 end
 
 function Mino:hard_drop()
-    self.remove = true
+    self:die()
     for _ = 1, BOARD_H do
         if self.board:check_collision(self.type, self.x, self.y+1, self.rotation) then
             break
@@ -73,6 +73,10 @@ end
 
 function Mino:update(dt)
 
+end
+
+function Mino:die()
+    self.remove = true
 end
 
 return Mino

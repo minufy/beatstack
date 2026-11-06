@@ -14,6 +14,7 @@ return function ()
     Input.hard_drop = Input.new({"space"})
     Input.soft_drop = Input.new({"down"})
     Input.restart = Input.new({"r"})
+    Input.hold = Input.new({"lshift"})
 
     -- Audio.new("jump")
 

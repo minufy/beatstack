@@ -1,5 +1,6 @@
 local draw_order = {
     "board",
+    "panel",
     "mino",
 }
 
