@@ -4,9 +4,14 @@ require("scenes.base.draw")(Game)
 require("scenes.base.physics")(Game)
 require("scenes.base.update")(Game)
 
-function Game:init(level)
-    self.current_level = level or 1
+local spawn_x
+local spawn_y
+
+function Game:init()
     Level:init()
+    spawn_x = 3
+    spawn_y = BOARD_H/2-2
+
     self:reset()
 end
 
@@ -18,6 +23,33 @@ function Game:update(dt)
 
     Camera:update(dt)
     self:update_objects(dt)
+
+    if Input.right.pressed then
+        self:set_direction(1)
+    end
+    if Input.left.pressed then
+        self:set_direction(-1)
+    end
+    if Input.right.up and Input.left.up then
+        self:set_direction(0)
+    end
+
+    if Input.rotate_cw.pressed then
+        self:rotate(1)
+    end
+    if Input.rotate_ccw.pressed then
+        self:rotate(-1)
+    end
+    if Input.rotate_180.pressed then
+        self:rotate(2)
+    end
+
+    if self.direction ~= 0 then
+        self.das_timer = self.das_timer+dt
+        if self.das_timer >= SETTINGS.das then
+            self:update_arr(dt)
+        end
+    end
 end
 
 function Game:draw()
@@ -46,9 +78,49 @@ function Game:add(o)
     return o
 end
 
+function Game:set_direction(dx)
+    self.direction = dx
+    self:move(dx, 0)
+    self.das_timer = 0
+    self.arr_timer = 0
+    self.arr_time = 0
+end
+
+function Game:update_arr(dt)
+    if SETTINGS.arr == 0 then
+        for i = 1, BOARD_W do
+            self:move(self.direction, 0)
+        end
+    else
+        self.arr_timer = self.arr_timer+dt
+        if self.arr_timer >= self.arr_time then
+            self:move(self.direction, 0)
+            self.arr_time = self.arr_time+SETTINGS.arr
+        end
+    end
+end
+
+function Game:spawn_mino()
+    local mino_type = self.randomizer:peek(1)[1]
+    self.mino = self:add(Mino.new(spawn_x, spawn_y, mino_type))
+end
+
+function Game:move(dx, dy)
+    self.mino:move(self.board, dx, dy)
+end
+
+function Game:rotate(dr)
+    self.mino:rotate(self.board, dr)
+end
+
 function Game:reset()
+    self.das_timer = 0
+    self.arr_timer = 0
+    self.arr_time = 0
     self.objects = {}
-    Level:load_level(tostring(self.current_level), self)
+    self.randomizer = Randomizer.new()
+    self.board = self:add(Board.new())
+    self:spawn_mino()
 end
 
 return Game
