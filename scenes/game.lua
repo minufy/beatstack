@@ -25,11 +25,25 @@ function Game:update(dt)
     Camera:update(dt)
     self:update_objects(dt)
 
+    if Input.right.released then
+        if Input.left.down then
+            self:set_direction(-1)
+        end
+    end
+    if Input.left.released then
+        if Input.right.down then
+            self:set_direction(1)
+        end
+    end
     if Input.right.pressed then
         self:set_direction(1)
+        self:move(1, 0)
+        self:reset_x_timers()
     end
     if Input.left.pressed then
         self:set_direction(-1)
+        self:move(-1, 0)
+        self:reset_x_timers()
     end
     if Input.right.up and Input.left.up then
         self:set_direction(0)
@@ -95,10 +109,6 @@ end
 
 function Game:set_direction(dx)
     self.direction = dx
-    self:move(dx, 0)
-    self.das_timer = 0
-    self.arr_timer = 0
-    self.arr_time = 0
 end
 
 function Game:update_arr(dt, soft_drop)
@@ -173,11 +183,15 @@ function Game:hold()
 end
 
 function Game:reset_timers()
+    self:reset_x_timers()
+    self.sdarr_timer = 0
+    self.sdarr_time = 0
+end
+
+function Game:reset_x_timers()
     self.das_timer = 0
     self.arr_timer = 0
     self.arr_time = 0
-    self.sdarr_timer = 0
-    self.sdarr_time = 0
 end
 
 function Game:reset()
