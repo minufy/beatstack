@@ -11,6 +11,9 @@ return function ()
     Input.rotate_cw = Input.new({"up"})
     Input.rotate_ccw = Input.new({"lctrl"})
     Input.rotate_180 = Input.new({"a"})
+    Input.hard_drop = Input.new({"space"})
+    Input.soft_drop = Input.new({"down"})
+    Input.restart = Input.new({"r"})
 
     -- Audio.new("jump")
 
@@ -23,6 +26,7 @@ return function ()
     SETTINGS = {
         das = 7,
         arr = 0,
+        sdarr = 0,
     }
 
     COLORS = {

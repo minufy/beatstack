@@ -49,10 +49,9 @@ function Board:update(dt)
 
 end
 
-function Board:place_mino(mino)
-    for _, pos in ipairs(MINO.shapes[mino.type][mino.rotation_index]) do
-        local x, y = pos[1], pos[2]
-        self.grid[mino.y+y][mino.x+x] = mino.type
+function Board:place(type, x, y, rotation)
+    for _, pos in ipairs(MINO.shapes[type][rotation]) do
+        self.grid[y+pos[2]+1][x+pos[1]+1] = type
     end
 end
 
@@ -60,10 +59,9 @@ function Board:check_collision(type, x, y, rotation)
     for _, pos in ipairs(MINO.shapes[type][rotation]) do
         local mx = x+pos[1]
         local my = y+pos[2]
-        local colliding = self.grid[my][mx] ~= nil
         local outside_x = mx < 0 or mx >= BOARD_W
         local outside_y = my < 0 or my >= BOARD_H
-        if colliding or outside_x or outside_y then
+        if outside_x or outside_y or self.grid[my+1][mx+1] ~= nil then
            	return true
         end
     end

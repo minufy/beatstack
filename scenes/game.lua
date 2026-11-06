@@ -43,6 +43,17 @@ function Game:update(dt)
     if Input.rotate_180.pressed then
         self:rotate(2)
     end
+    if Input.hard_drop.pressed then
+        self:hard_drop()
+    end
+    if Input.soft_drop.down then
+        self:update_sdarr(dt)
+    end
+    if Input.restart.pressed then
+        SM:set_fade(function ()
+            self:reset()
+        end)
+    end
 
     if self.direction ~= 0 then
         self.das_timer = self.das_timer+dt
@@ -88,8 +99,9 @@ end
 
 function Game:update_arr(dt)
     if SETTINGS.arr == 0 then
-        for i = 1, BOARD_W do
+        for _ = 1, BOARD_W do
             self:move(self.direction, 0)
+            self:update_sdarr(0)
         end
     else
         self.arr_timer = self.arr_timer+dt
@@ -100,8 +112,22 @@ function Game:update_arr(dt)
     end
 end
 
+function Game:update_sdarr(dt)
+    if SETTINGS.sdarr == 0 then
+        for _ = 1, BOARD_H do
+            self:move(0, 1)
+        end
+    else
+        self.sdarr_timer = self.sdarr_timer+dt
+        if self.sdarr_timer >= self.arr_time then
+            self:move(0, 1)
+            self.arr_time = self.arr_time+SETTINGS.sdarr
+        end
+    end
+end
+
 function Game:spawn_mino()
-    local mino_type = self.randomizer:peek(1)[1]
+    local mino_type = self.randomizer:next()
     self.mino = self:add(Mino.new(spawn_x, spawn_y, mino_type))
 end
 
@@ -113,10 +139,17 @@ function Game:rotate(dr)
     self.mino:rotate(self.board, dr)
 end
 
+function Game:hard_drop(dr)
+    self.mino:hard_drop(self.board)
+    self:spawn_mino()
+end
+
 function Game:reset()
     self.das_timer = 0
     self.arr_timer = 0
     self.arr_time = 0
+    self.sdarr_timer = 0
+    self.sdarr_time = 0
     self.objects = {}
     self.randomizer = Randomizer.new()
     self.board = self:add(Board.new())

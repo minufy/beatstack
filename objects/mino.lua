@@ -43,6 +43,16 @@ function Mino:rotate(board, dr)
     end
 end
 
+function Mino:hard_drop(board)
+    self.remove = true
+    for _ = 1, BOARD_H do
+        if not board:check_collision(self.type, self.x, self.y+1, self.rotation) then
+            self.y = self.y+1
+        end
+    end
+    board:place(self.type, self.x, self.y, self.rotation)
+end
+
 function Mino:update(dt)
 
 end
