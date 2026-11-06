@@ -32,6 +32,7 @@ return function ()
     COLORS = {
         bg = Color.hex("#111111"),
         board_bg = Color.hex("#1a1a1a"),
+        shadow = Color.alpha(Color.hex("ffffff"), 0.2),
     }
 
     TILE_SIZE = 16

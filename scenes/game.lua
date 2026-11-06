@@ -130,28 +130,33 @@ end
 
 function Game:spawn_mino()
     local mino_type = self.randomizer:next()
-    self.mino = self:add(Mino.new(spawn_x, spawn_y, mino_type))
+    self.mino = self:add(Mino.new(spawn_x, spawn_y, mino_type, self.board))
 end
 
 function Game:move(dx, dy)
-    self.mino:move(self.board, dx, dy)
+    self.mino:move(dx, dy)
 end
 
 function Game:rotate(dr)
-    self.mino:rotate(self.board, dr)
+    self.mino:rotate(dr)
 end
 
 function Game:hard_drop(dr)
-    self.mino:hard_drop(self.board)
+    self.mino:hard_drop()
     self:spawn_mino()
+    self:reset_timers()
 end
 
-function Game:reset()
+function Game:reset_timers()
     self.das_timer = 0
     self.arr_timer = 0
     self.arr_time = 0
     self.sdarr_timer = 0
     self.sdarr_time = 0
+end
+
+function Game:reset()
+    self:reset_timers()
     self.objects = {}
     self.randomizer = Randomizer.new()
     self.board = self:add(Board.new())
