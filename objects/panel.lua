@@ -24,7 +24,8 @@ function Panel:draw()
     end
     for i, mino in ipairs(self.minos) do
         for _, pos in ipairs(MINO.shapes[mino][1]) do
-            local x, y = pos[1], pos[2]
+            local display_offset = MINO.display_offsets[mino]
+            local x, y = pos[1]+display_offset[1], pos[2]+display_offset[2]
             if self.shadow then
                 love.graphics.setColor(COLORS.shadow)
             else

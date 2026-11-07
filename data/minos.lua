@@ -108,10 +108,21 @@ local colors = {
 
 local types = {"I", "O", "T", "S", "Z", "J", "L"}
 
+local display_offsets = {
+    I = {0, -0.5},
+    O = {0, 0},
+    T = {0.5, 0},
+    S = {0.5, 0},
+    Z = {0.5, 0},
+    J = {0.5, 0},
+    L = {0.5, 0},
+}
+
 return {
     kicks = kicks,
     get_kicks = get_kicks,
     shapes = shapes,
     colors = colors,
-    types = types
+    types = types,
+    display_offsets = display_offsets,
 }

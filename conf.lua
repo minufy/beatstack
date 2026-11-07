@@ -1,7 +1,7 @@
 WINDOW_W = 400
 WINDOW_H = 300
 CONSOLE = os.getenv("CONSOLE") == "true"
-FPS_LIMIT = 240
+FPS_LIMIT = 120
 
 function love.conf(t)
     t.window.resizable = true
