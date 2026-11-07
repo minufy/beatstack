@@ -25,25 +25,21 @@ function Game:update(dt)
     Camera:update(dt)
     self:update_objects(dt)
 
-    if Input.right.released then
+    if Input.right.pressed then
+        self:set_direction(1)
+    end
+    if Input.left.pressed then
+        self:set_direction(-1)
+    end
+    if Input.right.released and self.direction == 1  then
         if Input.left.down then
             self:set_direction(-1)
         end
     end
-    if Input.left.released then
+    if Input.left.released and self.direction == -1 then
         if Input.right.down then
             self:set_direction(1)
         end
-    end
-    if Input.right.pressed then
-        self:set_direction(1)
-        self:move(1, 0)
-        self:reset_x_timers()
-    end
-    if Input.left.pressed then
-        self:set_direction(-1)
-        self:move(-1, 0)
-        self:reset_x_timers()
     end
     if Input.right.up and Input.left.up then
         self:set_direction(0)
@@ -76,7 +72,7 @@ function Game:update(dt)
     if self.direction ~= 0 then
         self.das_timer = self.das_timer+dt
         if self.das_timer >= SETTINGS.das then
-            self:update_arr(dt, Input.soft_drop.down)
+            self:update_arr(Input.soft_drop.down)
         end
     end
 end
@@ -108,10 +104,17 @@ function Game:add(o)
 end
 
 function Game:set_direction(dx)
+    if self.direction == dx then
+        return
+    end
     self.direction = dx
+    self:reset_x_timers()
+    if dx ~= 0 then
+        self:move(dx, 0)
+    end
 end
 
-function Game:update_arr(dt, soft_drop)
+function Game:update_arr(soft_drop)
     if SETTINGS.arr == 0 then
         for _ = 1, BOARD_W do
             self:move(self.direction, 0)
@@ -119,12 +122,11 @@ function Game:update_arr(dt, soft_drop)
                 self:update_sdarr(0)
             end
         end
-    else
-        self.arr_timer = self.arr_timer+dt
-        if self.arr_timer >= self.arr_time then
-            self:move(self.direction, 0)
-            self.arr_time = self.arr_time+SETTINGS.arr
-        end
+        return
+    end
+    while self.das_timer >= SETTINGS.das + self.arr_time do
+        self:move(self.direction, 0)
+        self.arr_time = self.arr_time + SETTINGS.arr
     end
 end
 
@@ -135,9 +137,9 @@ function Game:update_sdarr(dt)
         end
     else
         self.sdarr_timer = self.sdarr_timer+dt
-        if self.sdarr_timer >= self.arr_time then
+        if self.sdarr_timer >= self.sdarr_time then
             self:move(0, 1)
-            self.arr_time = self.arr_time+SETTINGS.sdarr
+            self.sdarr_time = self.sdarr_time+SETTINGS.sdarr
         end
     end
 end
@@ -161,7 +163,6 @@ end
 function Game:hard_drop()
     self.mino:hard_drop()
     self:spawn_mino()
-    self:reset_timers()
 end
 
 function Game:hold()
@@ -196,6 +197,7 @@ end
 
 function Game:reset()
     self:reset_timers()
+    self.direction = 0
     self.objects = {}
     self.randomizer = Randomizer.new()
     self.next_panel = self:add(Panel.new((BOARD_W+1)*CELL_SIZE, spawn_y*CELL_SIZE))

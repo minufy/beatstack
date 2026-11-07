@@ -38,6 +38,7 @@ function love.update(dt)
     end
 end
 
+local last_frame = love.timer.getTime()
 function love.draw()
     Res:before()
     SM:draw()
@@ -47,6 +48,13 @@ function love.draw()
         love.graphics.setFont(debug_font)
         love.graphics.print(tostring(love.timer.getFPS()), 0, Log.smooth_h)
     end
+
+    local elapsed = love.timer.getTime()-last_frame
+    local remaining = 1/FPS_LIMIT-elapsed
+    if remaining > 0 then
+        love.timer.sleep(remaining)
+    end
+    last_frame = love.timer.getTime()
 end
 
 function love.wheelmoved(dx, dy)
